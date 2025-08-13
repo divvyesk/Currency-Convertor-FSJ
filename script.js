@@ -1,123 +1,93 @@
-// Toggle between Login and Sign Up forms
-document.getElementById('login-btn').addEventListener('click', function() {
-    document.getElementById('login-form').style.display = 'block';
-    document.getElementById('signup-form').style.display = 'none';
-    document.getElementById('login-btn').classList.add('active');
-    document.getElementById('signup-btn').classList.remove('active');
+// Toggle Login/Signup Forms
+document.getElementById("login-btn").onclick = () => {
+  document.getElementById("login-form").style.display = "block";
+  document.getElementById("signup-form").style.display = "none";
+  document.getElementById("login-btn").classList.add("active");
+  document.getElementById("signup-btn").classList.remove("active");
+};
+
+document.getElementById("signup-btn").onclick = () => {
+  document.getElementById("signup-form").style.display = "block";
+  document.getElementById("login-form").style.display = "none";
+  document.getElementById("signup-btn").classList.add("active");
+  document.getElementById("login-btn").classList.remove("active");
+};
+
+// Toggle Password Visibility
+["login", "signup", "confirm"].forEach(id => {
+  const toggle = document.getElementById(`toggle-${id}-password`);
+  if (toggle) {
+    toggle.onclick = () => {
+      const input = document.getElementById(`${id}-password`);
+      input.type = input.type === "password" ? "text" : "password";
+    };
+  }
 });
 
-document.getElementById('signup-btn').addEventListener('click', function() {
-    document.getElementById('login-form').style.display = 'none';
-    document.getElementById('signup-form').style.display = 'block';
-    document.getElementById('signup-btn').classList.add('active');
-    document.getElementById('login-btn').classList.remove('active');
-});
+// Password Strength
+const passwordInput = document.getElementById("signup-password");
+const passwordStrengthDisplay = document.getElementById("password-strength");
 
-// Toggle password visibility for Login form
-document.getElementById('toggle-login-password').addEventListener('click', function() {
-    const passwordInput = document.getElementById('login-password');
-    const passwordType = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordInput.setAttribute('type', passwordType);
-});
-
-// Toggle password visibility for Sign Up form
-document.getElementById('toggle-signup-password').addEventListener('click', function() {
-    const passwordInput = document.getElementById('signup-password');
-    const passwordType = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordInput.setAttribute('type', passwordType);
-});
-
-// Toggle password visibility for Confirm Password field
-document.getElementById('toggle-confirm-password').addEventListener('click', function() {
-    const confirmPasswordInput = document.getElementById('confirm-password');
-    const passwordType = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    confirmPasswordInput.setAttribute('type', passwordType);
-});
-
-// Password strength detector for Sign Up form
-const passwordInput = document.getElementById('signup-password');
-const passwordStrengthDisplay = document.getElementById('password-strength');
-
-passwordInput.addEventListener('input', function() {
+if (passwordInput) {
+  passwordInput.addEventListener("input", () => {
     const password = passwordInput.value;
     const strength = checkPasswordStrength(password);
-    passwordStrengthDisplay.textContent = strength;
+    passwordStrengthDisplay.textContent = `Password Strength: ${strength}`;
+  });
+}
+
+function checkPasswordStrength(password) {
+  const strong = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  if (strong.test(password)) return "Strong";
+  else if (password.length >= 6) return "Medium";
+  return "Weak";
+}
+
+function isValidEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}
+
+// Handle Login
+document.getElementById("login-form").addEventListener("submit", e => {
+  e.preventDefault();
+  const email = document.getElementById("login-username").value;
+  const password = document.getElementById("login-password").value;
+
+  if (!isValidEmail(email)) {
+    alert("Enter a valid email.");
+    return;
+  }
+  if (password.length < 8) {
+    alert("Password must be at least 8 characters.");
+    return;
+  }
+
+  // Simulated login success
+  alert("Login successful!");
+  window.location.href = "converter.html"; // Redirect to currency converter page
 });
 
-// Check password strength
-function checkPasswordStrength(password) {
-    let strength = 'Weak';
-    const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+// Handle Signup
+document.getElementById("signup-form").addEventListener("submit", e => {
+  e.preventDefault();
+  const email = document.getElementById("signup-username").value;
+  const password = document.getElementById("signup-password").value;
+  const confirm = document.getElementById("confirm-password").value;
 
-    if (strongRegex.test(password)) {
-        strength = 'Strong';
-    } else if (password.length >= 6) {
-        strength = 'Medium';
-    }
+  if (!isValidEmail(email)) {
+    alert("Enter a valid email.");
+    return;
+  }
+  if (checkPasswordStrength(password) !== "Strong") {
+    alert("Password must be strong.");
+    return;
+  }
+  if (password !== confirm) {
+    alert("Passwords do not match.");
+    return;
+  }
 
-    return `Password Strength: ${strength}`;
-}
-
-// Email format validation (Regex)
-function isValidEmail(email) {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
-}
-
-// Handle Login form submission
-function handleLoginSubmit(event) {
-    event.preventDefault();  // Prevent form submission
-
-    const username = document.getElementById('login-username').value;
-    const password = document.getElementById('login-password').value;
-
-    // Check email validity
-    if (!isValidEmail(username)) {
-        alert("Please enter a valid email address (e.g., example@gmail.com).");
-        return;  // Prevent further form submission
-    }
-
-    // Check if password is strong enough
-    if (password.length < 8) {
-        alert("Password is too weak. It should be at least 8 characters long.");
-        return;
-    }
-
-    // If validation passes, proceed with the login (you can replace this with actual logic)
-    alert(`Logged in as: ${username}`);
-}
-
-// Handle Sign Up form submission
-function handleSignUpSubmit(event) {
-    event.preventDefault();  // Prevent form submission
-
-    const name = document.getElementById('signup-name').value;
-    const username = document.getElementById('signup-username').value;
-    const password = document.getElementById('signup-password').value;
-    const confirmPassword = document.getElementById('confirm-password').value;
-
-    // Check email validity
-    if (!isValidEmail(username)) {
-        alert("Please enter a valid email address (e.g., example@gmail.com).");
-        return;  // Prevent further form submission
-    }
-
-    // Check if password is strong enough
-    if (password.length < 8 || !checkPasswordStrength(password).includes('Strong')) {
-        alert("Password is too weak. It should be at least 8 characters long and include uppercase letters, numbers, and special characters.");
-        return;
-    }
-
-    // Check if passwords match
-    if (password !== confirmPassword) {
-        alert("Passwords do not match.");
-        return;
-    }
-
-    // If validation passes, proceed with the sign-up (you can replace this with actual logic)
-    alert(`Signed up successfully as: ${name}`);
-}
-
-// Attach submit event listeners to forms
-document.getElementById('login-form').addEventListener('submit', handleLoginSubmit);
-document.getElementById('signup-form').addEventListener('submit', handleSignUpSubmit);
+  alert("Signup successful! You can now log in.");
+  document.getElementById("login-btn").click();
+});
