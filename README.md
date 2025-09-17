@@ -1,1 +1,1 @@
-https://divvyesk.github.io/Currency-Convertor-FSJ/history.html#
+https://divvyesk.github.io/Currency-Convertor-FSJ/
